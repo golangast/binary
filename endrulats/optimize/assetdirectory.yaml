@@ -1,0 +1,9 @@
+opt:
+  sassin: ./assets/build/sass
+  sasspartials: ./assets/build/partials
+  sassout: ./assets/build/css
+  cssin: ./assets/build/css
+  cssout: ./assets/optimized/css/min6157908115575.css
+  jsin: ./assets/build/js
+  jsout: ./assets/optimized/js/min158128689583.js
+  imgin: ./assets/optimized/img

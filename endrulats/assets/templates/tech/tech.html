@@ -1,0 +1,67 @@
+{{define "tech"}}
+<div class="tab-pane fade" id="tech" role="tabpanel" aria-labelledby="tech-tab">
+
+
+    <div class="row">
+        <div class="col-4">
+            <p>This is what I used to build this site.</p>
+            <div id="list-example" class="list-group">
+                <a class="list-group-item list-group-item-action" href="#materialize">Materialize CSS</a>
+                <a class="list-group-item list-group-item-action" href="#bootstrap">Bootstrap</a>
+                <a class="list-group-item list-group-item-action" href="#go">Go</a>
+
+            </div>
+        </div>
+        <div class="col-8">
+            <div data-bs-spy="scroll" data-bs-target="#materialize" data-bs-smooth-scroll="true"
+                class="scrollspy-example" tabindex="0">
+                <div id="materialize" class="card">
+                    <div class="card-header">
+                        Materialize
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title"> Materialize CSS</h5>
+                        <p class="card-text">I like Materialize because it lets you create pretty components without
+                            having to mess much with details.
+                            It also has a nice nav bar for mobile.</p>
+                        <a href="https://materializecss.com/" class="btn btn-primary" target="_blank">Site</a>
+                    </div>
+                </div>
+            </div>
+            <div data-bs-spy="scroll" data-bs-target="#bootstrap" data-bs-smooth-scroll="true" class="scrollspy-example"
+                tabindex="0">
+                <div id="Bootstrap" class="card">
+                    <div class="card-header">
+                        Bootstrap
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title"> Bootstrap</h5>
+                        <p class="card-text">Bootstrap is nice for the same reasons as Materialize. It allows you to
+                            easily customize the look and feel of the application.
+                        </p>
+                        <a href="https://getbootstrap.com/" class="btn btn-primary" target="_blank">Site</a>
+                    </div>
+                </div>
+            </div>
+            <div data-bs-spy="scroll" data-bs-target="#go" data-bs-smooth-scroll="true" class="scrollspy-example"
+            tabindex="0">
+            <div id="go" class="card">
+                <div class="card-header">
+                    Go
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title"> Go</h5>
+                    <p class="card-text">
+
+                    </p>
+                    <a href="https://go.dev/" class="btn btn-primary" target="_blank">Site</a>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+
+
+</div>
+{{end}}
