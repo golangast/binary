@@ -132,8 +132,8 @@ func main() {
 	// Generate a nonce
 
 	e.Use(middleware.SecureWithConfig(middleware.SecureConfig{
-		XSSProtection: "1; mode=block",
-		// XFrameOptions:         "SAMEORIGIN",
+		XSSProtection:         "1; mode=block",
+		XFrameOptions:         "SAMEORIGIN",
 		HSTSMaxAge:            31536000,
 		ContentSecurityPolicy: "default-src 'self'; style-src 'self'; frame-src youtube.com www.youtube.com; 'nonce-" + Nonce + "'",
 	}))
