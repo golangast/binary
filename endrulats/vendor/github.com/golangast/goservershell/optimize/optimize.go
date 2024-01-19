@@ -20,17 +20,17 @@ func Optimizer(imgin string) {
 	file, err := os.Open(imgin)
 
 	if err != nil {
-		log.Fatalf(err.Error(), file)
+		log.Fatalf(err.Error())
 	}
 
 	img, err := png.Decode(file)
 
 	if err != nil {
-		log.Fatalf(err.Error(), file)
+		log.Fatalf(err.Error())
 	}
 	fi, err := os.Stat(imgin)
 	if err != nil {
-		log.Fatalf(err.Error(), file)
+		log.Fatalf(err.Error())
 	}
 	// get the size
 
@@ -41,23 +41,23 @@ func Optimizer(imgin string) {
 
 	f, err := os.Create(imgin)
 	if err != nil {
-		log.Fatalf("error creating file: %s", err, file)
+		log.Fatalf("error creating file: %s", err)
 	}
 
 	defer func(f *os.File) {
 		err := f.Close()
 		if err != nil {
-			log.Fatalf(err.Error(), file)
+			log.Fatalf(err.Error())
 		}
 	}(f)
 
 	err = png.Encode(f, compressingImage)
 	if err != nil {
-		log.Fatalf(err.Error(), file)
+		log.Fatalf(err.Error())
 	}
 	fif, err := os.Stat(imgin)
 	if err != nil {
-		log.Fatalf(err.Error(), file)
+		log.Fatalf(err.Error())
 	}
 
 	fmt.Println("after: ", fif.Size())
