@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
 	"embed"
 	"fmt"
 	"html/template"
@@ -14,10 +15,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/caddyserver/certmagic"
 	"github.com/golangast/endrulats/assets"
 	"github.com/golangast/endrulats/src/funcmaps"
 	"github.com/golangast/endrulats/src/routes"
+	"golang.org/x/crypto/acme"
 	"golang.org/x/crypto/acme/autocert"
 
 	"github.com/Masterminds/sprig/v3"
@@ -161,13 +162,13 @@ func main() {
 		XSSProtection:         "1; mode=block",
 		XFrameOptions:         "SAMEORIGIN",
 		HSTSMaxAge:            31536000,
-		ContentSecurityPolicy: "default-src 'self'; style-src 'self'; frame-src youtube.com www.youtube.com; 'nonce-" + Nonce + "'",
+		ContentSecurityPolicy: "default-src 'self'; style-src 'self'; img-src * 'self' frame-src youtube.com www.youtube.com; 'nonce-" + Nonce + "'",
 	}))
 
 	e.Use(middleware.CSRFWithConfig(middleware.CSRFConfig{
 		TokenLookup:    "header:headkey",
 		CookiePath:     "/",
-		CookieDomain:   "137.184.216.6",
+		CookieDomain:   "endrulats.com",
 		CookieSecure:   true,
 		CookieHTTPOnly: true,
 	}))
@@ -188,18 +189,26 @@ func main() {
 			<h3>TLS certificates automatically installed from Let's Encrypt :)</h3>
 		`)
 	})
-
-	tt, err := certmagic.Listen([]string{"endrulats.com"})
-	if err != nil {
-		fmt.Println(err)
+	autoTLSManager := autocert.Manager{
+		Prompt: autocert.AcceptTOS,
+		// Cache certificates to avoid issues with rate limits (https://letsencrypt.org/docs/rate-limits)
+		Cache:      autocert.DirCache("/var/www/.cache"),
+		HostPolicy: autocert.HostWhitelist("endrulats.com"),
 	}
-
-	fmt.Println(tt)
-	err = certmagic.HTTPS([]string{"endrulats.com", "endrulats.com"}, e)
-	if err != nil {
-		fmt.Println(err)
+	s := http.Server{
+		Addr:    ":443",
+		Handler: e, // set Echo as handler
+		TLSConfig: &tls.Config{
+			Certificates:   nil, // <-- s.ListenAndServeTLS will populate this field
+			GetCertificate: autoTLSManager.GetCertificate,
+			NextProtos:     []string{acme.ALPNProto},
+		},
+		//ReadTimeout: 30 * time.Second, // use custom timeouts
 	}
-
+	if err := s.ListenAndServeTLS("cert.pem", "key.pem"); err != http.ErrServerClosed {
+		e.Logger.Fatal(err)
+	}
+	e.Logger.Fatal(e.StartAutoTLS(":443"))
 	// for new cert go here https://stackoverflow.com/questions/45508442/golang-https-with-ecdsa-certificate-from-openssl
 
 }
