@@ -2,19 +2,23 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"embed"
 	"fmt"
 	"html/template"
 	"io"
 	"io/fs"
+	"log/slog"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/caddyserver/certmagic"
 	"github.com/golangast/endrulats/assets"
 	"github.com/golangast/endrulats/src/funcmaps"
 	"github.com/golangast/endrulats/src/routes"
+	"golang.org/x/crypto/acme/autocert"
 
 	"github.com/Masterminds/sprig/v3"
 
@@ -129,6 +133,28 @@ func main() {
 	e.Logger.SetLevel(log.ERROR)
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
+		LogStatus:   true,
+		LogURI:      true,
+		LogError:    true,
+		HandleError: true, // forwards error to the global error handler, so it can decide appropriate status code
+		LogValuesFunc: func(c echo.Context, v middleware.RequestLoggerValues) error {
+			if v.Error == nil {
+				logger.LogAttrs(context.Background(), slog.LevelInfo, "REQUEST",
+					slog.String("uri", v.URI),
+					slog.Int("status", v.Status),
+				)
+			} else {
+				logger.LogAttrs(context.Background(), slog.LevelError, "REQUEST_ERROR",
+					slog.String("uri", v.URI),
+					slog.Int("status", v.Status),
+					slog.String("err", v.Error.Error()),
+				)
+			}
+			return nil
+		},
+	}))
 	// Generate a nonce
 
 	e.Use(middleware.SecureWithConfig(middleware.SecureConfig{
@@ -141,7 +167,7 @@ func main() {
 	e.Use(middleware.CSRFWithConfig(middleware.CSRFConfig{
 		TokenLookup:    "header:headkey",
 		CookiePath:     "/",
-		CookieDomain:   "161.35.101.49",
+		CookieDomain:   "137.184.216.6",
 		CookieSecure:   true,
 		CookieHTTPOnly: true,
 	}))
@@ -153,9 +179,28 @@ func main() {
 	e.Static("/", "assets/optimized")
 	e.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(30)))
 
-	// for new cert go here https://stackoverflow.com/questions/45508442/golang-https-with-ecdsa-certificate-from-openssl
+	e.AutoTLSManager.Cache = autocert.DirCache("/var/www/.cache")
+	e.Use(middleware.Recover())
+	e.Use(middleware.Logger())
+	e.GET("/", func(c echo.Context) error {
+		return c.HTML(http.StatusOK, `
+			<h1>Welcome to Echo!</h1>
+			<h3>TLS certificates automatically installed from Let's Encrypt :)</h3>
+		`)
+	})
 
-	e.Logger.Fatal(e.Start(":5002"))
+	tt, err := certmagic.Listen([]string{"endrulats.com"})
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(tt)
+	err = certmagic.HTTPS([]string{"endrulats.com", "endrulats.com"}, e)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	// for new cert go here https://stackoverflow.com/questions/45508442/golang-https-with-ecdsa-certificate-from-openssl
 
 }
 
@@ -331,4 +376,13 @@ func UpdateText(f string, o string, n string) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+}
+
+func wr(ms string) {
+	file, fileErr := os.Create("file")
+	if fileErr != nil {
+		fmt.Println(fileErr)
+		return
+	}
+	fmt.Fprintf(file, "%v\n", ms)
 }
