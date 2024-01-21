@@ -3,7 +3,6 @@ package server
 import (
 	"bytes"
 	"context"
-	"crypto/tls"
 	"embed"
 	"fmt"
 	"html/template"
@@ -19,8 +18,6 @@ import (
 	"github.com/golangast/endrulats/src/funcmaps"
 	"github.com/golangast/endrulats/src/handler/get/profile"
 	"github.com/golangast/endrulats/src/routes"
-	"golang.org/x/crypto/acme"
-	"golang.org/x/crypto/acme/autocert"
 
 	"github.com/Masterminds/sprig/v3"
 
@@ -173,31 +170,31 @@ func Server() {
 	e.Static("/", "assets/optimized")
 	e.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(30)))
 
-	e.AutoTLSManager.Cache = autocert.DirCache("/var/www/.cache")
-	e.Use(middleware.Recover())
-	e.Use(middleware.Logger())
+	// e.AutoTLSManager.Cache = autocert.DirCache("/var/www/.cache")
+	// e.Use(middleware.Recover())
+	// e.Use(middleware.Logger())
 
-	autoTLSManager := autocert.Manager{
-		Prompt: autocert.AcceptTOS,
-		// Cache certificates to avoid issues with rate limits (https://letsencrypt.org/docs/rate-limits)
-		Cache:      autocert.DirCache("/var/www/.cache"),
-		HostPolicy: autocert.HostWhitelist("endrulats.com"),
-	}
-	s := http.Server{
-		Addr:    ":443",
-		Handler: e, // set Echo as handler
-		TLSConfig: &tls.Config{
-			Certificates:   nil, // <-- s.ListenAndServeTLS will populate this field
-			GetCertificate: autoTLSManager.GetCertificate,
-			NextProtos:     []string{acme.ALPNProto},
-		},
-		//ReadTimeout: 30 * time.Second, // use custom timeouts
-	}
-	if err := s.ListenAndServeTLS("cert.pem", "key.pem"); err != http.ErrServerClosed {
-		e.Logger.Fatal(err)
-	}
-	e.Logger.Fatal(e.StartAutoTLS(":5002"))
-	// e.Logger.Fatal(e.Start(":5001"))
+	// autoTLSManager := autocert.Manager{
+	// 	Prompt: autocert.AcceptTOS,
+	// 	// Cache certificates to avoid issues with rate limits (https://letsencrypt.org/docs/rate-limits)
+	// 	Cache:      autocert.DirCache("/var/www/.cache"),
+	// 	HostPolicy: autocert.HostWhitelist("endrulats.com"),
+	// }
+	// s := http.Server{
+	// 	Addr:    ":443",
+	// 	Handler: e, // set Echo as handler
+	// 	TLSConfig: &tls.Config{
+	// 		Certificates:   nil, // <-- s.ListenAndServeTLS will populate this field
+	// 		GetCertificate: autoTLSManager.GetCertificate,
+	// 		NextProtos:     []string{acme.ALPNProto},
+	// 	},
+	// 	//ReadTimeout: 30 * time.Second, // use custom timeouts
+	// }
+	// if err := s.ListenAndServeTLS("cert.pem", "key.pem"); err != http.ErrServerClosed {
+	// 	e.Logger.Fatal(err)
+	// }
+	// e.Logger.Fatal(e.StartAutoTLS(":5002"))
+	e.Logger.Fatal(e.Start(":5003"))
 	// for new cert go here https://stackoverflow.com/questions/45508442/golang-https-with-ecdsa-certificate-from-openssl
 
 }

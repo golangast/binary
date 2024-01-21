@@ -25,12 +25,7 @@ p {
         padding-left: 0;
     }
 }
-@media only screen and (max-width : 600px) {
 
-  .floatbar{
-   width: 27% !important;
-  }
-}
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons");
 
 .brand-logo{
