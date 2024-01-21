@@ -80,15 +80,20 @@ func (u *Users) CheckLogin(c echo.Context, email, sitetokens, passwordraw string
 			return err, "wrong input"
 		}
 
-		cookie, err := cookies.ReadCookie(c, u.SessionName)
+		// cookie, err := cookies.ReadCookie(c, u.SessionName)
+		// if err != nil {
+		// 	return err, "wrong input"
+		// }
+
+		err = cookies.WriteCookie(c, u.SessionName, u.SessionKey)
 		if err != nil {
-			return err, "wrong input"
+			return err, "cookie didnt write"
 		}
 
 		fmt.Println(u)
-		if cookie.Name != u.SessionName && cookie.Value != u.SessionKey {
-			return err, "wrong input"
-		}
+		// if cookie.Name != u.SessionName && cookie.Value != u.SessionKey {
+		// 	return err, "wrong input"
+		// }
 
 		//header
 		hkey := c.Response().Header().Get("headerkey")
