@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/golangast/endrulats/internal/dbsql/user"
-	"github.com/golangast/endrulats/internal/email"
 	"github.com/golangast/endrulats/internal/security/cookies"
 	"github.com/golangast/endrulats/internal/security/jwt"
 	"github.com/golangast/endrulats/internal/security/tokens"
@@ -12,6 +11,9 @@ import (
 )
 
 func Createuser(c echo.Context) error {
+	nonce := c.Get("n")
+	jsr := c.Get("jsr")
+	cssr := c.Get("cssr")
 
 	users := new(user.Users)
 
@@ -21,10 +23,13 @@ func Createuser(c echo.Context) error {
 
 	if users.Email == "" && users.PasswordRaw == "" && users.SiteToken == "" {
 		return c.Render(http.StatusOK, "home.html", map[string]interface{}{
-			"EX": "",
-			"M":  "",
-			"U":  users,
-			"ST": users.SiteToken,
+			"EX":    "",
+			"M":     "",
+			"U":     users,
+			"ST":    users.SiteToken,
+			"nonce": nonce,
+			"jsr":   jsr,
+			"cssr":  cssr,
 		})
 	}
 
@@ -55,10 +60,10 @@ func Createuser(c echo.Context) error {
 		return err
 	}
 
-	err = email.EmailVerify(users.Email, users.SiteToken)
-	if err != nil {
-		return err
-	}
+	// err = email.EmailVerify(users.Email, users.SiteToken)
+	// if err != nil {
+	// 	return err
+	// }
 	if err := users.JWT(); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
@@ -67,11 +72,14 @@ func Createuser(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	return c.Render(http.StatusOK, "home.html", map[string]interface{}{
-		"EX": exist,
-		"M":  "",
-		"U":  users,
-		"ST": users.SiteToken,
+	return c.Render(http.StatusOK, "profile.html", map[string]interface{}{
+		"EX":    exist,
+		"M":     "",
+		"U":     users,
+		"ST":    users.SiteToken,
+		"nonce": nonce,
+		"jsr":   jsr,
+		"cssr":  cssr,
 	})
 
 }

@@ -2,11 +2,14 @@ package server
 
 import (
 	"bytes"
+	"context"
+	"crypto/tls"
 	"embed"
 	"fmt"
 	"html/template"
 	"io"
 	"io/fs"
+	"log/slog"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -14,13 +17,15 @@ import (
 
 	"github.com/golangast/endrulats/assets"
 	"github.com/golangast/endrulats/src/funcmaps"
+	"github.com/golangast/endrulats/src/handler/get/profile"
 	"github.com/golangast/endrulats/src/routes"
+	"golang.org/x/crypto/acme"
+	"golang.org/x/crypto/acme/autocert"
 
 	"github.com/Masterminds/sprig/v3"
 
 	"github.com/golangast/endrulats/internal/dbsql/user"
 	"github.com/golangast/endrulats/internal/rand"
-	"github.com/golangast/endrulats/src/handler/get/welcome"
 
 	"github.com/golangast/endrulats/internal/security/tokens"
 	"github.com/labstack/echo/v4"
@@ -112,7 +117,7 @@ func Server() {
 	}
 	r := e.Group("/restricted")
 	r.Use(middleware.KeyAuthWithConfig(queryAuthConfig))
-	r.GET("/welcome/:email/:sitetoken", welcome.Welcome)
+	r.GET("/usercreate/:email/:sitetoken", profile.Profile)
 
 	e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
 		Filesystem: getFileSystem(assets.Assets),
@@ -129,22 +134,37 @@ func Server() {
 	e.Logger.SetLevel(log.ERROR)
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
+		LogStatus:   true,
+		LogURI:      true,
+		LogError:    true,
+		HandleError: true, // forwards error to the global error handler, so it can decide appropriate status code
+		LogValuesFunc: func(c echo.Context, v middleware.RequestLoggerValues) error {
+			if v.Error == nil {
+				logger.LogAttrs(context.Background(), slog.LevelInfo, "REQUEST",
+					slog.String("uri", v.URI),
+					slog.Int("status", v.Status),
+				)
+			} else {
+				logger.LogAttrs(context.Background(), slog.LevelError, "REQUEST_ERROR",
+					slog.String("uri", v.URI),
+					slog.Int("status", v.Status),
+					slog.String("err", v.Error.Error()),
+				)
+			}
+			return nil
+		},
+	}))
 	// Generate a nonce
 
 	e.Use(middleware.SecureWithConfig(middleware.SecureConfig{
-		XSSProtection: "1; mode=block",
-		// XFrameOptions:         "SAMEORIGIN",
+		XSSProtection:         "1; mode=block",
+		XFrameOptions:         "SAMEORIGIN",
 		HSTSMaxAge:            31536000,
-		ContentSecurityPolicy: "default-src 'self'; style-src 'self'; frame-src youtube.com www.youtube.com; 'nonce-" + Nonce + "'",
+		ContentSecurityPolicy: "frame-src youtube.com www.youtube.com; default-src 'self'; style-src 'self'; img-src 'self'; 'nonce-" + Nonce + "'",
 	}))
 
-	e.Use(middleware.CSRFWithConfig(middleware.CSRFConfig{
-		TokenLookup:    "header:headkey",
-		CookiePath:     "/",
-		CookieDomain:   "161.35.101.49",
-		CookieSecure:   true,
-		CookieHTTPOnly: true,
-	}))
 	e.Use(middleware.BodyLimit("3M"))
 	e.IPExtractor = echo.ExtractIPDirect()
 	e.Use(middleware.GzipWithConfig(middleware.GzipConfig{
@@ -153,9 +173,32 @@ func Server() {
 	e.Static("/", "assets/optimized")
 	e.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(30)))
 
-	// for new cert go here https://stackoverflow.com/questions/45508442/golang-https-with-ecdsa-certificate-from-openssl
+	e.AutoTLSManager.Cache = autocert.DirCache("/var/www/.cache")
+	e.Use(middleware.Recover())
+	e.Use(middleware.Logger())
 
-	e.Logger.Fatal(e.Start(":5002"))
+	autoTLSManager := autocert.Manager{
+		Prompt: autocert.AcceptTOS,
+		// Cache certificates to avoid issues with rate limits (https://letsencrypt.org/docs/rate-limits)
+		Cache:      autocert.DirCache("/var/www/.cache"),
+		HostPolicy: autocert.HostWhitelist("endrulats.com"),
+	}
+	s := http.Server{
+		Addr:    ":443",
+		Handler: e, // set Echo as handler
+		TLSConfig: &tls.Config{
+			Certificates:   nil, // <-- s.ListenAndServeTLS will populate this field
+			GetCertificate: autoTLSManager.GetCertificate,
+			NextProtos:     []string{acme.ALPNProto},
+		},
+		//ReadTimeout: 30 * time.Second, // use custom timeouts
+	}
+	if err := s.ListenAndServeTLS("cert.pem", "key.pem"); err != http.ErrServerClosed {
+		e.Logger.Fatal(err)
+	}
+	e.Logger.Fatal(e.StartAutoTLS(":5002"))
+	// e.Logger.Fatal(e.Start(":5001"))
+	// for new cert go here https://stackoverflow.com/questions/45508442/golang-https-with-ecdsa-certificate-from-openssl
 
 }
 
@@ -331,4 +374,13 @@ func UpdateText(f string, o string, n string) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+}
+
+func wr(ms string) {
+	file, fileErr := os.Create("file")
+	if fileErr != nil {
+		fmt.Println(fileErr)
+		return
+	}
+	fmt.Fprintf(file, "%v\n", ms)
 }

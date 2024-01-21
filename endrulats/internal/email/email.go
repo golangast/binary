@@ -16,10 +16,10 @@ func EmailVerify(email, SiteToken string) error {
 
 	fmt.Println(`Please go to "http://localhost:5002/loginemail/` + l.Address + `/` + SiteToken + `" to login.`)
 
-	d := gomail.NewDialer("smtp.mailfence.com", 465, "----", "---")
+	d := gomail.NewDialer("smtp.mail.yahoo.com", 587, "dacdac123321@yahoo.com", "Qwaszx1@")
 	s, err := d.Dial()
 	if err != nil {
-		return err
+		fmt.Println(err)
 	}
 	m := gomail.NewMessage()
 	m.SetHeader("From", "---")
