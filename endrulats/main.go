@@ -1,8 +1,9 @@
-package main
+package server
 
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
 	"embed"
 	"fmt"
 	"html/template"
@@ -26,8 +27,6 @@ import (
 	"github.com/golangast/endrulats/internal/dbsql/user"
 	"github.com/golangast/endrulats/internal/rand"
 
-	"crypto/tls"
-
 	"github.com/golangast/endrulats/internal/security/tokens"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -37,7 +36,7 @@ import (
 	"golang.org/x/crypto/acme/autocert"
 )
 
-func main() {
+func Server() {
 
 	e := echo.New()
 	files, err := getAllFilenames(&assets.Assets)
@@ -46,13 +45,14 @@ func main() {
 	}
 
 	//for CSP policy to ensure that the assets are always available and secure
-	id := uuid.New()
+	id := uuid.New().String()
+
 	jsr := findjsrename()
 	cssr := findcssrename()
 	rr := rand.Rander()
 
-	Nonce := fmt.Sprintf(`nonce="` + rr + id.String() + `"`)
-	PNonce := fmt.Sprintf(`'nonce-` + rr + id.String() + `'`)
+	Nonce := fmt.Sprintf(`nonce="` + rr + id[0:10] + `"`)
+	PNonce := fmt.Sprintf(`'nonce-` + rr + id[0:10] + `'`)
 
 	viper.SetConfigName("assetdirectory") // name of config file (without extension)
 	viper.SetConfigType("yaml")           // REQUIRED if the config file does not have the extension in the name
@@ -199,6 +199,7 @@ func main() {
 	if err := s.ListenAndServeTLS("cert.pem", "key.pem"); err != http.ErrServerClosed {
 		e.Logger.Fatal(err)
 	}
+	// e.Logger.Fatal(e.StartAutoTLS(":5002"))
 	// e.Logger.Fatal(e.Start(":5001"))
 	// for new cert go here https://stackoverflow.com/questions/45508442/golang-https-with-ecdsa-certificate-from-openssl
 
@@ -279,8 +280,9 @@ func findjsrename() string {
 	// Get the current directory
 	currentDir := "./assets/optimized/js/"
 
-	id := uuid.New()
-	New_Path := "./assets/optimized/js/min" + id.String() + ".js"
+	id := uuid.New().String()
+
+	New_Path := "./assets/optimized/js/min" + id[0:10] + ".js"
 	// Walk the directory and print the names of all the files
 	err = filepath.Walk(currentDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -314,16 +316,16 @@ func findjsrename() string {
 		fmt.Println(err)
 	}
 
-	return id.String()
+	return id[0:10]
 }
 
 func findcssrename() string {
 	// Get the current directory
 	currentDir := "./assets/optimized/css/"
 
-	id := uuid.New()
+	id := uuid.New().String()
 
-	New_Path := "./assets/optimized/css/min" + id.String() + ".css"
+	New_Path := "./assets/optimized/css/min" + id[0:10] + ".css"
 	// Walk the directory and print the names of all the files
 	err = filepath.Walk(currentDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -357,7 +359,7 @@ func findcssrename() string {
 		fmt.Println(err)
 	}
 
-	return id.String()
+	return id[0:10]
 }
 
 // f is for file, o is for old text, n is for new text

@@ -72,7 +72,7 @@ func Createuser(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	return c.Render(http.StatusOK, "profile.html", map[string]interface{}{
+	return c.Render(http.StatusOK, "home.html", map[string]interface{}{
 		"EX":    exist,
 		"M":     "",
 		"U":     users,

@@ -5,6 +5,7 @@ import (
 	"github.com/golangast/endrulats/src/handler/get/loginemail"
 	"github.com/golangast/endrulats/src/handler/get/profile"
 	"github.com/golangast/endrulats/src/handler/post/createuser"
+	"github.com/golangast/endrulats/src/handler/post/userinput"
 	"github.com/golangast/endrulats/src/handler/restful/post"
 	"github.com/labstack/echo/v4"
 )
@@ -18,6 +19,7 @@ func Routes(e *echo.Echo) {
 
 	//post
 	e.POST("/usercreate", createuser.Createuser)
+	e.POST("/userinput", userinput.UserInput)
 	e.POST("/p", post.Posts)
 
 }

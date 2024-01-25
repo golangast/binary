@@ -17,21 +17,7 @@ p {
 }
 
 
-@media only screen and (max-width : 992px) {
 
-    header,
-    main,
-    footer {
-        padding-left: 0;
-    }
-}
-
-@media only screen and (max-width : 600px) {
-
-  .sidem{
-    display:none !important;
-  }
-}
 
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons");
 
@@ -228,7 +214,7 @@ h6 {
 }
 
 .par{
-  width: 82%;
+  width: 95%;
     text-align: justify;
     padding: 2%;
 }
@@ -246,4 +232,44 @@ h6 {
     margin: 1% auto;
     justify-content: center;
     display: block;
+}
+.pulseicon {
+  width: 95px !important;
+  height: auto !important;
+  background: #fff;
+  padding: 0;
+  margin: 0 auto;
+  justify-content: center;
+  display: block;
+}
+.mcenter {
+margin:3% auto;
+
+}
+
+.field{
+  width:100%;
+  margin:1%;
+  display: flex;
+  flex-direction: column;
+  
+}
+
+@media only screen and (max-width : 992px) {
+
+  header,
+  main,
+  footer {
+      padding-left: 0;
+  }
+}
+
+@media only screen and (max-width : 600px) {
+ 
+.para{
+  width: 82%;
+}
+.sidem{
+  display:none !important;
+}
 }

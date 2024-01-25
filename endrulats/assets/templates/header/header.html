@@ -9,12 +9,12 @@
     <title>Welcome</title>
   <link rel="stylesheet" media="all" rel="preload" {{ .nonce }} href="css/min{{.cssr}}.css">
 <!-- Google tag (gtag.js) -->
-<script  {{ .nonce }} rel="prefetch"  src="https://www.googletagmanager.com/gtag/js?id=G-RTTSFHTVY4"async ></script>
+<script  {{ .nonce }} rel="prefetch"  src="https://www.googletagmanager.com/gtag/js?id=G-RTTSFHTVY4" async ></script>
 
 </head>
 <nav class="nav-extended" rel="prefetch">
     <div class="nav-wrapper">
-        <a href="#" ><img  loading="lazy" width="39" height="45" class="brand-logo" {{ .nonce }} src="img/go.webp" alt="logo"></a>
+        <a href="#" ><img  loading="lazy" width="100%" height="auto" class="brand-logo" {{ .nonce }} src="img/go.webp" alt="logo"></a>
         <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">≡</i></a>
      
     </div>
@@ -22,9 +22,6 @@
 <ul class="sidenav" id="mobile-demo">
    <div class="logob"> <img  loading="lazy" class="brand-logo" {{ .nonce }} src="img/go.webp" alt="logo"></div>
 
-    <p>  {{if .U}}
-        Welcome! {{.U.Email}}
-         {{end}}</p>
          <div id="list-example" class="list-group">
     <li><a id="about-tab " data-bs-toggle="tab" data-bs-target="#about" type="button" role="tab"
         aria-controls="about" aria-selected="true" href="/">Home</a>

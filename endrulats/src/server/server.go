@@ -41,21 +41,15 @@ func Server() {
 		fmt.Print(err)
 	}
 
-	//if you are planning on using binary assets then use this but if you turn it on then
-	//you have to rebuild every time you rerun it.
-	// filesoptimized, err := getAllFilenames(&assets.AssetsOptimized)
-	// if err != nil {
-	// 	fmt.Print(err)
-	// }
-
 	//for CSP policy to ensure that the assets are always available and secure
-	id := uuid.New()
+	id := uuid.New().String()
+
 	jsr := findjsrename()
 	cssr := findcssrename()
 	rr := rand.Rander()
 
-	Nonce := fmt.Sprintf(`nonce="` + rr + id.String() + `"`)
-	PNonce := fmt.Sprintf(`'nonce-` + rr + id.String() + `'`)
+	Nonce := fmt.Sprintf(`nonce="` + rr + id[0:10] + `"`)
+	PNonce := fmt.Sprintf(`'nonce-` + rr + id[0:10] + `'`)
 
 	viper.SetConfigName("assetdirectory") // name of config file (without extension)
 	viper.SetConfigType("yaml")           // REQUIRED if the config file does not have the extension in the name
@@ -283,8 +277,9 @@ func findjsrename() string {
 	// Get the current directory
 	currentDir := "./assets/optimized/js/"
 
-	id := uuid.New()
-	New_Path := "./assets/optimized/js/min" + id.String() + ".js"
+	id := uuid.New().String()
+
+	New_Path := "./assets/optimized/js/min" + id[0:10] + ".js"
 	// Walk the directory and print the names of all the files
 	err = filepath.Walk(currentDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -318,16 +313,16 @@ func findjsrename() string {
 		fmt.Println(err)
 	}
 
-	return id.String()
+	return id[0:10]
 }
 
 func findcssrename() string {
 	// Get the current directory
 	currentDir := "./assets/optimized/css/"
 
-	id := uuid.New()
+	id := uuid.New().String()
 
-	New_Path := "./assets/optimized/css/min" + id.String() + ".css"
+	New_Path := "./assets/optimized/css/min" + id[0:10] + ".css"
 	// Walk the directory and print the names of all the files
 	err = filepath.Walk(currentDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -361,7 +356,7 @@ func findcssrename() string {
 		fmt.Println(err)
 	}
 
-	return id.String()
+	return id[0:10]
 }
 
 // f is for file, o is for old text, n is for new text
