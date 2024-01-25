@@ -157,8 +157,8 @@ func main() {
 	}))
 	// Generate a nonce
 
-	var works = "frame-src youtube.com www.youtube.com; default-src 'self'; style-src " + PNonce + " *.localhost:5001; img-src 'self' " + PNonce + "; "
-	var script = "connect-src " + PNonce + " *.google-analytics.com *.googletagmanager.com;base-uri 'self'; object-src 'none'; script-src " + PNonce + " *.googletagmanager.com *.localhost:5001; report-uri localhost:5001/;script-src-elem *.googletagmanager.com *.localhost:5001;"
+	var works = "frame-src youtube.com www.youtube.com; default-src 'self'; style-src " + PNonce + " *.endrulats.com; img-src 'self' " + PNonce + "; "
+	var script = "connect-src " + PNonce + " *.google-analytics.com *.googletagmanager.com;base-uri 'self'; object-src 'none'; script-src " + PNonce + " *.googletagmanager.com *.endrulats.com; report-uri localhost:5001/;script-src-elem *.googletagmanager.com *.endrulats.com;"
 	e.Use(middleware.SecureWithConfig(middleware.SecureConfig{
 		XSSProtection:         "1; mode=block",
 		XFrameOptions:         "SAMEORIGIN",
