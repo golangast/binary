@@ -1,4 +1,4 @@
-package server
+package main
 
 import (
 	"bytes"
@@ -36,7 +36,7 @@ import (
 	"golang.org/x/crypto/acme/autocert"
 )
 
-func Server() {
+func main() {
 
 	e := echo.New()
 	files, err := getAllFilenames(&assets.Assets)
