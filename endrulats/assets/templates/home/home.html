@@ -1,5 +1,5 @@
 {{ template "header" . }}
-<ul class="nav nav-tabs tabshadow" id="toptab" role="tablist" >
+<ul rel="prefetch"  class="nav nav-tabs tabshadow" id="toptab" role="tablist" >
   <li class="nav-item" role="presentation">
     <button class="nav-link" id="about-tab active" data-bs-toggle="tab" data-bs-target="#about" type="button" role="tab"
       aria-controls="about" aria-selected="true">About</button>
@@ -29,8 +29,14 @@
     <button class="nav-link" id="pizza-tab" data-bs-toggle="tab" data-bs-target="#pizza" type="button" role="tab"
       aria-controls="pizza" aria-selected="true">Pizza</button>
   </li>
-
-  
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="current-tab" data-bs-toggle="tab" data-bs-target="#current" type="button" role="tab"
+      aria-controls="current" aria-selected="true">Current</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab"
+      aria-controls="profile" aria-selected="true">Profile</button>
+  </li>
 </ul>
 <div class="tab-content" id="myTabContent">
 
@@ -43,7 +49,8 @@
       <a class="floatbar-bars list-group-item list-group-item-action"  id="projects-tab " data-bs-toggle="tab" data-bs-target="#projects" type="button" role="tab" aria-controls="projects" aria-selected="true">Projects</a>
       <a class="floatbar-bars list-group-item list-group-item-action"  id="resources-tab " data-bs-toggle="tab" data-bs-target="#resources" type="button" role="tab" aria-controls="resources" aria-selected="true">Resources</a>
       <a class="floatbar-bars list-group-item list-group-item-action"  id="pizza-tab " data-bs-toggle="tab" data-bs-target="#pizza" type="button" role="tab" aria-controls="pizza" aria-selected="true">Pizza</a>
-      <a class="floatbar-bars list-group-item list-group-item-action"  id="about-tab " data-bs-toggle="tab" data-bs-target="#about" type="button" role="tab" aria-controls="about" aria-selected="true">
+      <a class="floatbar-bars list-group-item list-group-item-action"  id="profile-tab " data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">Profile</a>
+      <a class="floatbar-bars list-group-item list-group-item-action"  id="current-tab  " data-bs-toggle="tab" data-bs-target="#current" type="button" role="tab" aria-controls="current" aria-selected="true">Current</a>
         {{if .U}}
        Welcome! {{.U.Email}}
         {{end}}
@@ -58,5 +65,7 @@
   {{ template "pizza" . }}
   {{ template "tech" . }}
   {{ template "history" . }}
+  {{ template "profile" . }}
+  {{ template "current" . }}
 </div>
 {{ template "footer" . }}

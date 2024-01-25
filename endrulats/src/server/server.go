@@ -14,6 +14,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/google/uuid"
+
 	"github.com/golangast/endrulats/assets"
 	"github.com/golangast/endrulats/src/funcmaps"
 	"github.com/golangast/endrulats/src/handler/get/profile"
@@ -47,11 +49,14 @@ func Server() {
 	// }
 
 	//for CSP policy to ensure that the assets are always available and secure
+	id := uuid.New()
 	jsr := findjsrename()
 	cssr := findcssrename()
 	rr := rand.Rander()
 
-	Nonce := fmt.Sprintf("nounce='" + rr + "'")
+	Nonce := fmt.Sprintf(`nonce="` + rr + id.String() + `"`)
+	PNonce := fmt.Sprintf(`'nonce-` + rr + id.String() + `'`)
+
 	viper.SetConfigName("assetdirectory") // name of config file (without extension)
 	viper.SetConfigType("yaml")           // REQUIRED if the config file does not have the extension in the name
 	viper.AddConfigPath("./optimize/")    // path to look for the config file in
@@ -155,11 +160,15 @@ func Server() {
 	}))
 	// Generate a nonce
 
+	var works = "frame-src youtube.com www.youtube.com; default-src 'self'; style-src " + PNonce + " *.localhost:5001; img-src 'self' " + PNonce + "; "
+	var script = "connect-src " + PNonce + " *.google-analytics.com *.googletagmanager.com;base-uri 'self'; object-src 'none'; script-src " + PNonce + " *.googletagmanager.com *.localhost:5001; report-uri localhost:5001/;script-src-elem *.googletagmanager.com *.localhost:5001;"
 	e.Use(middleware.SecureWithConfig(middleware.SecureConfig{
 		XSSProtection:         "1; mode=block",
 		XFrameOptions:         "SAMEORIGIN",
 		HSTSMaxAge:            31536000,
-		ContentSecurityPolicy: "frame-src youtube.com www.youtube.com; default-src 'self'; style-src 'self'; img-src 'self'; 'nonce-" + Nonce + "'",
+		ContentSecurityPolicy: works + script,
+		HSTSPreloadEnabled:    true,
+		ContentTypeNosniff:    "nosniff",
 	}))
 
 	e.Use(middleware.BodyLimit("3M"))
@@ -194,7 +203,7 @@ func Server() {
 	// 	e.Logger.Fatal(err)
 	// }
 	// e.Logger.Fatal(e.StartAutoTLS(":5002"))
-	e.Logger.Fatal(e.Start(":5003"))
+	e.Logger.Fatal(e.Start(":5001"))
 	// for new cert go here https://stackoverflow.com/questions/45508442/golang-https-with-ecdsa-certificate-from-openssl
 
 }
@@ -274,8 +283,8 @@ func findjsrename() string {
 	// Get the current directory
 	currentDir := "./assets/optimized/js/"
 
-	rr := rand.Rander()
-	New_Path := "./assets/optimized/js/min" + rr + ".js"
+	id := uuid.New()
+	New_Path := "./assets/optimized/js/min" + id.String() + ".js"
 	// Walk the directory and print the names of all the files
 	err = filepath.Walk(currentDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -309,15 +318,16 @@ func findjsrename() string {
 		fmt.Println(err)
 	}
 
-	return rr
+	return id.String()
 }
 
 func findcssrename() string {
 	// Get the current directory
 	currentDir := "./assets/optimized/css/"
 
-	rr := rand.Rander()
-	New_Path := "./assets/optimized/css/min" + rr + ".css"
+	id := uuid.New()
+
+	New_Path := "./assets/optimized/css/min" + id.String() + ".css"
 	// Walk the directory and print the names of all the files
 	err = filepath.Walk(currentDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -351,7 +361,7 @@ func findcssrename() string {
 		fmt.Println(err)
 	}
 
-	return rr
+	return id.String()
 }
 
 // f is for file, o is for old text, n is for new text

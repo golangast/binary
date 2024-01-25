@@ -16,8 +16,12 @@ $(document).ready(function () {
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
-    $('tabs', this).click(function () {
-
-    });
+  
 
 });
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+
+gtag('config', 'G-RTTSFHTVY4');

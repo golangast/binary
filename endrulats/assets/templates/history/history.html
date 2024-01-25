@@ -1,5 +1,5 @@
 {{define "history"}}
-<div class="tab-pane fade " id="history" role="tabpanel" aria-labelledby="history-tab">
+<div rel="prefetch"  class="tab-pane fade " id="history" role="tabpanel" aria-labelledby="history-tab">
 
     <div class="row">
         <div class="col s12 m2">
@@ -85,8 +85,8 @@
 
                 <p class="par center">
                     I had eventually been nominated for the <a href="https://www.league.org/terry-obanion-student-technology-award-winners" target="_blank">2015 TERRY O'BANION Student Developer Champion</a>.
-                    <div class="col s6"> <img class="fullimg"  {{ .nonce }} src="img/certs.jpg" alt="logo"></div>
-                    <div class="col s6"> <img  class="fullimg"  {{ .nonce }} src="img/terry.jpg" alt="logo"></div>
+                    <div class="col s6"> <img loading="lazy" rel="prefetch"  class="fullimg"  {{ .nonce }} src="img/certs.jpg" alt="logo"></div>
+                    <div class="col s6"> <img  loading="lazy" rel="prefetch"  class="fullimg"  {{ .nonce }} src="img/terry.jpg" alt="logo"></div>
                 </p> 
 
             <p class="par">
@@ -99,14 +99,15 @@
 
             <p class="par">
                 I enjoy helping others and continually learning.
-                <div class="col s6"> <img  class="fullimg"  {{ .nonce }} src="img/help.jpg" alt="logo"></div>
-                <div class="col s6"> <img  class="fullimg"  {{ .nonce }} src="img/help2.jpg" alt="logo"></div>
-                <div class="col s6"> <img  class="fullimg"  {{ .nonce }} src="img/help3.jpg" alt="logo"></div>
+                <div class="col s6"> <img  loading="lazy" rel="prefetch"  class="fullimg"  {{ .nonce }} src="img/help.jpg" alt="logo"></div>
+                <div class="col s6"> <img  loading="lazy" rel="prefetch"  class="fullimg"  {{ .nonce }} src="img/help2.jpg" alt="logo"></div>
+                <div class="col s6"> <img  loading="lazy" rel="prefetch"  class="fullimg"  {{ .nonce }} src="img/help3.jpg" alt="logo"></div>
 
             </p>
 
            
         </div>
     </div>
+</div>
 
     {{end}}

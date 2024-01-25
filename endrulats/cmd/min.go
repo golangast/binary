@@ -14,7 +14,6 @@ var minCmd = &cobra.Command{
 	Long:  `Used to minify files and directories`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		fmt.Println("~~~~~~~~~~~~~~~~~~~~~~`")
 		viper.SetConfigName("assetdirectory") // name of config file (without extension)
 		viper.SetConfigType("yaml")           // REQUIRED if the config file does not have the extension in the name
 		viper.AddConfigPath("./optimize/")    // path to look for the config file in

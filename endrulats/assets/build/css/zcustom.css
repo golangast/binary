@@ -239,3 +239,11 @@ h6 {
 .center{
   text-align: center;
 }
+
+.termlogo{
+  width: 22%;
+    height: auto;
+    margin: 1% auto;
+    justify-content: center;
+    display: block;
+}

@@ -1,0 +1,38 @@
+{{define "current"}}
+<div rel="prefetch" class="tab-pane fade" id="current" role="tabpanel" aria-labelledby="current-tab">
+
+    <div class="row">
+        <div class="col s12 m2">
+            <h5 class="center">
+                SwitchTerm
+            </h5>
+            <img class="op shadow-lg p-3 mb-5 bg-white rounded termlogo" loading="lazy" width="693" height="924"
+                src="img/term.webp" {{ .nonce }} class="d-block w-100" alt="logo">
+
+            <h5 class="center">
+                What am I currently working on?
+            </h5>
+            <p class="par">
+                I am currently working on learning more c#/asp.net and
+                working on my switchterm application. I am trying to
+                build the foundation for an application generator and
+                a command generator.
+            </p>
+            <h5 class="center">
+                Why build this?
+            </h5>
+            <p class="par">
+                There are solutions for running containers and applications using big systems like kurbenets and
+                docker. I believe these things can and are just functions. Why not put the idea into code
+                and generate functions. You can generate bash commands if you need to start things that way.
+
+            </p>
+
+        </div>
+    </div>
+
+
+
+</div>
+
+{{end}}

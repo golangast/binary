@@ -2,8 +2,8 @@ package assets
 
 import "embed"
 
-//go:embed templates
+//go:embed templates/*
 var Assets embed.FS
 
-//go:embed optimized
+//go:embed optimized/*
 var AssetsOptimized embed.FS
