@@ -1,0 +1,59 @@
+{{define "game"}}
+<div rel="prefetch" class="tab-pane fade" id="game" role="tabpanel" aria-labelledby="game-tab">
+    <div class="show"></div>
+    <div id="pane">
+        <!-- character -->
+        <div class="box1" id="box" class="character">
+            <img loading="lazy" nonce="{{ .nonce }}" src="img/game/img/gpurple.png">
+        </div>
+
+        <!-- houses -->
+        <div id="box2" class="d box2">
+            <img loading="lazy" nonce="{{ .nonce }}" src="img/game/img/question.png">
+            <div class="titlehouse center new badge purple">Zach's House</div>
+
+        </div>
+        <div id="box3" class="d box3">
+            <img loading="lazy" nonce="{{ .nonce }}" src="img/game/img/houserock.gif">
+            <div class="titlehouse center new badge red">Builder House</div>
+        </div>
+
+        <div id="box4" class="d box4">
+            <img loading="lazy" nonce="{{ .nonce }}" src="img/game/img/homeserver.gif">
+            <div class="titlehouse center new badge blue">Beginner House</div>
+
+        </div>
+
+        <!-- popups  -->
+        <div class="popup-overlay popups zachhouse">
+            <!--Creates the popup content-->
+            <div class="popup-content zachhouse">
+                {{ template "zachhouse" . }}
+                <!--popup's close button-->
+            </div>
+        </div>
+        <div class="popup-overlay popups beginpopup">
+            <!--Creates the popup content-->
+            <div class="popup-content beginpopup">
+                {{ template "beginner" . }}
+                <!--popup's close button-->
+            </div>
+        </div>
+        <div class="popup-overlay popups builderpopup">
+            <!--Creates the popup content-->
+            <div class="popup-content builderpopup">
+                {{ template "builder" . }}
+                <!--popup's close button-->
+            </div>
+        </div>
+
+    </div>
+
+    <br>
+    <br>
+    <div class="new badge blue">Welcome to my game.  Here you will learn to play and learn!</div><br>
+    <div class="new badge green">To move you just use the arrow keys and you use the space bar to enter the houses. - REMEMBER YOU HAVE TO BE FULLY IN THE HOUSES TO ENTER</div>
+    <div class="new badge red">Does not work on mobile yet</div><br>
+
+</div>
+{{ end}}

@@ -32,7 +32,7 @@
             "request": "launch",
             // "debugAdapter": "dlv-dap",
             "mode": "auto",
-            "program": "${workspaceFolder}/imgopt/main.go",
+            "program": "${workspaceFolder}/main.go",
             "env": {},
             "args": [
                 "min"

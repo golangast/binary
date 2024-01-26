@@ -157,8 +157,8 @@ func main() {
 	}))
 	// Generate a nonce
 
-	var works = "frame-src youtube.com www.youtube.com; default-src 'self'; style-src " + PNonce + " https://endrulats.com *.endrulats.com *.endrulats.com/*; img-src 'self' " + PNonce + "; "
-	var script = "connect-src " + PNonce + " *.google-analytics.com *.googletagmanager.com;base-uri 'self'; object-src 'none'; script-src " + PNonce + " *.googletagmanager.com *.endrulats.com; report-uri https://endrulats.com *.endrulats.com *.endrulats.com/*;script-src-elem *.googletagmanager.com https://endrulats.com *.endrulats.com *.endrulats.com/* ;"
+	var works = "frame-src youtube.com www.youtube.com; default-src 'self'; style-src " + PNonce + " *.localhost:5001 https://endrulats.com *.endrulats.com *.endrulats.com/*; img-src 'self' " + PNonce + "; "
+	var script = "connect-src " + PNonce + " *.localhost:5001/* *.google-analytics.com *.googletagmanager.com;base-uri 'self'; object-src 'none'; script-src " + PNonce + " *.localhost:5001  *.localhost:5001/* *.googletagmanager.com *.endrulats.com; report-uri https://endrulats.com *.endrulats.com *.endrulats.com/*;script-src-elem *.localhost:5001 *.localhost:5001/* *.googletagmanager.com https://endrulats.com *.localhost:5001/* *.endrulats.com/* *.localhost:5001 ;"
 	e.Use(middleware.SecureWithConfig(middleware.SecureConfig{
 		XSSProtection:         "1; mode=block",
 		XFrameOptions:         "SAMEORIGIN",
@@ -282,7 +282,11 @@ func findjsrename() string {
 
 	id := uuid.New().String()
 
-	New_Path := "./assets/optimized/js/min" + id[0:10] + ".js"
+	if len(id) > 15 {
+		id = id[0:8]
+	}
+
+	New_Path := "./assets/optimized/js/min" + id + ".js"
 	// Walk the directory and print the names of all the files
 	err = filepath.Walk(currentDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -315,8 +319,23 @@ func findjsrename() string {
 	if err != nil {
 		fmt.Println(err)
 	}
+	// f, err := os.Open("./assets/optimized/js/")
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// list, err := f.Readdirnames(-1)
+	// f.Close()
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// fmt.Println(len(list))
+	// if len(list) > 2 {
 
-	return id[0:10]
+	// 	iterate("/assets/optimized/js/", "min"+id+".js")
+
+	// }
+
+	return id
 }
 
 func findcssrename() string {
@@ -324,8 +343,11 @@ func findcssrename() string {
 	currentDir := "./assets/optimized/css/"
 
 	id := uuid.New().String()
+	if len(id) > 15 {
+		id = id[0:8]
+	}
 
-	New_Path := "./assets/optimized/css/min" + id[0:10] + ".css"
+	New_Path := "./assets/optimized/css/min" + id + ".css"
 	// Walk the directory and print the names of all the files
 	err = filepath.Walk(currentDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -333,7 +355,7 @@ func findcssrename() string {
 			return err
 		}
 
-		if strings.Contains(path, "/min") && strings.Contains(path, ".css") {
+		if strings.Contains(path, "css/min") && strings.Contains(path, ".css") {
 
 			if _, err := os.Stat(New_Path); err != nil {
 				// The source does not exist or some other error accessing the source
@@ -359,7 +381,7 @@ func findcssrename() string {
 		fmt.Println(err)
 	}
 
-	return id[0:10]
+	return id
 }
 
 // f is for file, o is for old text, n is for new text
@@ -389,3 +411,28 @@ func wr(ms string) {
 	}
 	fmt.Fprintf(file, "%v\n", ms)
 }
+
+// func iterate(dir, file string) {
+// 	currentDirectory, err := os.Getwd()
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	fileList := []string{}
+// 	filepath.Walk(currentDirectory+dir, func(path string, info os.FileInfo, err error) error {
+// 		fileList = append(fileList, path)
+// 		if err != nil {
+// 			log.Fatalf(err.Error())
+// 		}
+// 		fmt.Println(path, info, info.Name())
+// 		for _, file := range fileList {
+// 			fmt.Println(file)
+// 		}
+// 		if info.Name() != file {
+// 			// e := os.Remove(path + info.Name())
+// 			// if e != nil {
+// 			// 	log.Fatal(e)
+// 			// }
+// 		}
+// 		return nil
+// 	})
+// }

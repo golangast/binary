@@ -3,7 +3,7 @@ opt:
   sasspartials: ./assets/build/partials
   sassout: ./assets/build/css
   cssin: ./assets/build/css
-  cssout: ./assets/optimized/css/min5b194d3e-4976c2c2b-7798b3986-dc2c890ef-bee82ec06-7f82e4fc7-4ae6aaabc-c837f34d8-974bbbf9b-b961118da-87e084a37-6c203e3f2-8aa59d433-df9ade924.css
+  cssout: ./assets/optimized/css/min8500487951f047115fbd087bd23a1bff43190f68b3dc2f47bd32949fab11ad1d645b372b2927251036c1f5c2601c89d86216.css
   jsin: ./assets/build/js
-  jsout: ./assets/optimized/js/min8856c26d-42943c650-cf97479c6-047bbbdd5-9b953c654-ee882c7b5-69e6085a5-e77a5a44b-c7d172128-fba409bef-a0a14b04f-0b850e58c-c75f8f83c-.js
+  jsout: ./assets/optimized/js/mincc66b790b107e9ffbecb431e6fc35938313148be6f01b10c091654107e42da82c1cf0cf3c602a5756ddabcc5872c52c0b18fdc28.js
   imgin: ./assets/optimized/img
