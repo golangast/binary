@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"bytes"
@@ -36,7 +36,7 @@ import (
 	"golang.org/x/crypto/acme/autocert"
 )
 
-func main() {
+func Server() {
 
 	e := echo.New()
 	files, err := getAllFilenames(&assets.Assets)
@@ -319,21 +319,6 @@ func findjsrename() string {
 	if err != nil {
 		fmt.Println(err)
 	}
-	// f, err := os.Open("./assets/optimized/js/")
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// list, err := f.Readdirnames(-1)
-	// f.Close()
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// fmt.Println(len(list))
-	// if len(list) > 2 {
-
-	// 	iterate("/assets/optimized/js/", "min"+id+".js")
-
-	// }
 
 	return id
 }
@@ -411,28 +396,3 @@ func wr(ms string) {
 	}
 	fmt.Fprintf(file, "%v\n", ms)
 }
-
-// func iterate(dir, file string) {
-// 	currentDirectory, err := os.Getwd()
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	fileList := []string{}
-// 	filepath.Walk(currentDirectory+dir, func(path string, info os.FileInfo, err error) error {
-// 		fileList = append(fileList, path)
-// 		if err != nil {
-// 			log.Fatalf(err.Error())
-// 		}
-// 		fmt.Println(path, info, info.Name())
-// 		for _, file := range fileList {
-// 			fmt.Println(file)
-// 		}
-// 		if info.Name() != file {
-// 			// e := os.Remove(path + info.Name())
-// 			// if e != nil {
-// 			// 	log.Fatal(e)
-// 			// }
-// 		}
-// 		return nil
-// 	})
-// }
