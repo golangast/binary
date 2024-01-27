@@ -3,7 +3,7 @@ opt:
   sasspartials: ./assets/build/partials
   sassout: ./assets/build/css
   cssin: ./assets/build/css
-  cssout: ./assets/optimized/css/min19fc8556fdd7e82953597ed679162dfc08fa847c2e261a7823b90d0e52bad2253b9916e48500487951f047115fbd087bd23a1bff43190f68b3dc2f47bd32949fab11ad1d645b372b2927251036c1f5c2601c89d86216.css
+  cssout: ./assets/optimized/css/mindad3d26f19fc8556fdd7e82953597ed679162dfc08fa847c2e261a7823b90d0e52bad2253b9916e48500487951f047115fbd087bd23a1bff43190f68b3dc2f47bd32949fab11ad1d645b372b2927251036c1f5c2601c89d86216.css
   jsin: ./assets/build/js
-  jsout: ./assets/optimized/js/mind0ce78f43063896b6259b9b1a8d5512ce4f7c35936a8cfce1419fabf60cd485db767fc00cc66b790b107e9ffbecb431e6fc35938313148be6f01b10c091654107e42da82c1cf0cf3c602a5756ddabcc5872c52c0b18fdc28.js
+  jsout: ./assets/optimized/js/min44af5674d0ce78f43063896b6259b9b1a8d5512ce4f7c35936a8cfce1419fabf60cd485db767fc00cc66b790b107e9ffbecb431e6fc35938313148be6f01b10c091654107e42da82c1cf0cf3c602a5756ddabcc5872c52c0b18fdc28.js
   imgin: ./assets/optimized/img
