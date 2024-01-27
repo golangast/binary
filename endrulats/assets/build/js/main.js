@@ -109,7 +109,7 @@ $(document).ready(function () {
                                 delay: 1000,
                                 
                             });
-                            $('#messagesbuilder').append('<center >try to write the program in the <a href="https://go.dev/play/p/YfHt-B-NnIk" target="_blank">Playground</a></center> <center><button  class="fullbuttons btn-floating btn-large red pulse center close">Close</button></center>');
+                            $('#messagesbuilder').append('<center >try to write the program in the <a href="https://go.dev/play/p/YfHt-B-NnIk" target="_blank">Playground</a></center> ');
                     }
                 }
                 });
