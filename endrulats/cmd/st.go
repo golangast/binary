@@ -11,7 +11,6 @@ import (
 	"runtime"
 
 	"github.com/golangast/endrulats/internal/dbsql/dbconn"
-	"github.com/golangast/endrulats/src/server"
 	"github.com/spf13/cobra"
 )
 
@@ -26,14 +25,13 @@ var stCmd = &cobra.Command{
 		dbconn.ErrorCheck(err)
 		fmt.Println("db connected")
 
-		err, out, errout := Startprograms(`go build`)
+		err, out, errout := Startprograms(`go build && ./endrulats`)
 		if err != nil {
 			log.Printf("error: %v\n", err)
 		}
 		fmt.Println(out)
 		fmt.Println("--- errs ---")
 		fmt.Println(errout)
-		server.Server()
 
 	},
 }

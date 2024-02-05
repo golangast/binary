@@ -298,7 +298,7 @@ func getAllFilenames(efs *embed.FS) (files []string, err error) {
 func findjsrename() string {
 	// Get the current directory
 	currentDir := "./assets/optimized/js/"
-
+	// id := uuid.New().String()
 	id := "3333"
 
 	if len(id) > 15 {
