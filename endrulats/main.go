@@ -1,10 +1,10 @@
-package server
+package main
 
 import (
 	"bytes"
 	"context"
-	"crypto/tls"
 	"embed"
+	"errors"
 	"fmt"
 	"html/template"
 	"io"
@@ -14,41 +14,87 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
+	"golang.org/x/crypto/acme/autocert"
 
 	"github.com/golangast/endrulats/assets"
 	"github.com/golangast/endrulats/src/funcmaps"
 	"github.com/golangast/endrulats/src/handler/get/profile"
 	"github.com/golangast/endrulats/src/routes"
 
-	"github.com/Masterminds/sprig/v3"
+	// "github.com/golangast/goservershell/assets"
 
+	"crypto/tls"
+
+	"github.com/Masterminds/sprig/v3"
+	"github.com/golangast/endrulats/internal/dbsql/createtable"
 	"github.com/golangast/endrulats/internal/dbsql/user"
 	"github.com/golangast/endrulats/internal/rand"
 
 	"github.com/golangast/endrulats/internal/security/tokens"
+	"github.com/golangast/gentil/utility/ff"
+	"github.com/golangast/gentil/utility/temp"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/acme"
-	"golang.org/x/crypto/acme/autocert"
 )
 
-func Server() {
+//go:embed all:assets/optimized
+var AssetsOptimize embed.FS
+
+func main() {
 
 	e := echo.New()
+
 	files, err := getAllFilenames(&assets.Assets)
 	if err != nil {
 		fmt.Print(err)
 	}
+	if _, err := os.Stat("assets/config/assetdirectory.yaml"); errors.Is(err, os.ErrNotExist) {
 
+		file, err := ff.Makefile("assets/config/assetdirectory.yaml")
+		if err != nil {
+			fmt.Print(err)
+		}
+
+		var config = `opt:
+ sassin: ./assets/build/sass
+ sasspartials: ./assets/build/partials
+ sassout: ./assets/build/css
+ cssin: ./assets/build/css
+ cssout: ./assets/optimized/css/min740cdd0edad3d26f1.css
+ jsin: ./assets/build/js
+ jsout: ./assets/optimized/js/min1d460f4.js
+ imgin: ./assets/optimized/img`
+
+		err = temp.Writetemplate(config, file, nil)
+		if err != nil {
+			fmt.Print(err)
+		}
+
+	}
+	if _, err := os.Stat("assets/db/database.db"); errors.Is(err, os.ErrNotExist) {
+		_, err := ff.Makefile("assets/db/database.db")
+		if err != nil {
+			fmt.Print(err)
+		}
+
+		err = createtable.CreateTable()
+		if err != nil {
+			fmt.Println(err)
+		}
+
+	}
 	//for CSP policy to ensure that the assets are always available and secure
 	id := uuid.New().String()
 
 	jsr := findjsrename()
 	cssr := findcssrename()
+
 	rr := rand.Rander()
 
 	Nonce := fmt.Sprintf(`nonce="` + rr + id[0:10] + `"`)
@@ -56,7 +102,7 @@ func Server() {
 
 	viper.SetConfigName("assetdirectory") // name of config file (without extension)
 	viper.SetConfigType("yaml")           // REQUIRED if the config file does not have the extension in the name
-	viper.AddConfigPath("./optimize/")    // path to look for the config file in
+	viper.AddConfigPath(".")              // path to look for the config file in
 	err = viper.ReadInConfig()            // Find and read the config file
 	if err != nil {
 		fmt.Println(err)
@@ -68,8 +114,8 @@ func Server() {
 	cssnew := strings.ReplaceAll(cssout, "min", "min"+cssr)
 	jsnew := strings.ReplaceAll(jsout, "min", "min"+jsr)
 
-	UpdateText("./optimize/assetdirectory.yaml", cssout, cssnew)
-	UpdateText("./optimize/assetdirectory.yaml", jsout, jsnew)
+	UpdateText("./assetdirectory.yaml", cssout, cssnew)
+	UpdateText("./assetdirectory.yaml", jsout, jsnew)
 	Noncer := template.HTMLAttr(Nonce)
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
@@ -118,12 +164,9 @@ func Server() {
 	r.Use(middleware.KeyAuthWithConfig(queryAuthConfig))
 	r.GET("/usercreate/:email/:sitetoken", profile.Profile)
 
-	e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
-		Filesystem: getFileSystem(assets.Assets),
-		HTML5:      true,
-	}))
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
+		AllowHeaders: []string{"Authorization", "Content-Type"},
 		AllowMethods: []string{http.MethodGet, http.MethodHead, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodDelete},
 	}))
 
@@ -157,8 +200,8 @@ func Server() {
 	}))
 	// Generate a nonce
 
-	var works = "frame-src youtube.com www.youtube.com; default-src 'self'; style-src " + PNonce + " *.localhost:5001 https://endrulats.com *.endrulats.com *.endrulats.com/*; img-src 'self' " + PNonce + "; "
-	var script = "connect-src " + PNonce + " *.localhost:5001/* *.google-analytics.com *.googletagmanager.com;base-uri 'self'; object-src 'none'; script-src " + PNonce + " *.localhost:5001  *.localhost:5001/* *.googletagmanager.com *.endrulats.com; report-uri https://endrulats.com *.endrulats.com *.endrulats.com/*;script-src-elem *.localhost:5001 *.localhost:5001/* *.googletagmanager.com https://endrulats.com *.localhost:5001/* *.endrulats.com/* *.localhost:5001 ;"
+	var works = "frame-src youtube.com www.youtube.com; default-src 'self'; style-src " + PNonce + " 'self' https://endrulats.com *.endrulats.com *.endrulats.com/*; img-src  " + PNonce + " 'self' https://endrulats.com *.endrulats.com *.endrulats.com/*; style-src-elem " + PNonce + " *.localhost:5002/*;"
+	var script = "connect-src " + PNonce + " *.localhost:5002/* *.google-analytics.com *.googletagmanager.com;base-uri 'self'; object-src 'none'; script-src " + PNonce + " *.googletagmanager.com; report-uri https://endrulats.com *.endrulats.com *.endrulats.com/*;script-src-elem " + PNonce + " *.googletagmanager.com;"
 	e.Use(middleware.SecureWithConfig(middleware.SecureConfig{
 		XSSProtection:         "1; mode=block",
 		XFrameOptions:         "SAMEORIGIN",
@@ -173,19 +216,24 @@ func Server() {
 	e.Use(middleware.GzipWithConfig(middleware.GzipConfig{
 		Level: 5,
 	}))
-	e.Static("/", "assets/optimized")
+
 	e.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(30)))
 
 	e.AutoTLSManager.Cache = autocert.DirCache("/var/www/.cache")
 	e.Use(middleware.Recover())
 	e.Use(middleware.Logger())
-
+	e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
+		HTML5:      true,
+		Root:       "assets/optimized/",
+		Filesystem: http.FS(AssetsOptimize),
+	}))
 	autoTLSManager := autocert.Manager{
 		Prompt: autocert.AcceptTOS,
 		// Cache certificates to avoid issues with rate limits (https://letsencrypt.org/docs/rate-limits)
 		Cache:      autocert.DirCache("/var/www/.cache"),
 		HostPolicy: autocert.HostWhitelist("endrulats.com"),
 	}
+
 	s := http.Server{
 		Addr:    ":443",
 		Handler: e, // set Echo as handler
@@ -194,41 +242,23 @@ func Server() {
 			GetCertificate: autoTLSManager.GetCertificate,
 			NextProtos:     []string{acme.ALPNProto},
 		},
-		//ReadTimeout: 30 * time.Second, // use custom timeouts
+		ReadTimeout: 30 * time.Second, // use custom timeouts
 	}
-	if err := s.ListenAndServeTLS("cert.pem", "key.pem"); err != http.ErrServerClosed {
+	keyspem, err := assets.Keypem.ReadFile("certs/key.pem")
+	if err != nil {
+		fmt.Println(err)
+	}
+	certspem, err := assets.Certpem.ReadFile("certs/cert.pem")
+	if err != nil {
+		fmt.Println(err)
+	}
+	if err := s.ListenAndServeTLS(string(certspem), string(keyspem)); err != http.ErrServerClosed {
 		e.Logger.Fatal(err)
 	}
-	// e.Logger.Fatal(e.StartAutoTLS(":5002"))
-	// e.Logger.Fatal(e.Start(":5001"))
+
+	//e.Logger.Fatal(e.Start(":5002"))
 	// for new cert go here https://stackoverflow.com/questions/45508442/golang-https-with-ecdsa-certificate-from-openssl
 
-}
-
-func GetAllFilePathsInDirectory(dirpath string) ([]string, error) {
-	var paths []string
-	err := filepath.Walk(dirpath, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		if !info.IsDir() {
-			paths = append(paths, path)
-		}
-		return nil
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return paths, nil
-}
-
-func ParseDirectory(dirpath string) (*template.Template, error) {
-	paths, err := GetAllFilePathsInDirectory(dirpath)
-	if err != nil {
-		return nil, err
-	}
-	return template.ParseFiles(paths...)
 }
 
 type TemplateRenderer struct {
@@ -247,17 +277,6 @@ func (t *TemplateRenderer) Render(w io.Writer, name string, data interface{}, c 
 }
 
 var err error
-
-func getFileSystem(TmplMainGo embed.FS) http.FileSystem {
-
-	log.Print("using embed mode")
-	fsys, err := fs.Sub(TmplMainGo, "assets/templates")
-	if err != nil {
-		log.Print(err)
-	}
-
-	return http.FS(fsys)
-}
 
 // https://gist.github.com/clarkmcc/1fdab4472283bb68464d066d6b4169bc
 func getAllFilenames(efs *embed.FS) (files []string, err error) {
@@ -280,7 +299,7 @@ func findjsrename() string {
 	// Get the current directory
 	currentDir := "./assets/optimized/js/"
 
-	id := uuid.New().String()
+	id := "3333"
 
 	if len(id) > 15 {
 		id = id[0:8]
@@ -319,21 +338,6 @@ func findjsrename() string {
 	if err != nil {
 		fmt.Println(err)
 	}
-	// f, err := os.Open("./assets/optimized/js/")
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// list, err := f.Readdirnames(-1)
-	// f.Close()
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// fmt.Println(len(list))
-	// if len(list) > 2 {
-
-	// 	iterate("/assets/optimized/js/", "min"+id+".js")
-
-	// }
 
 	return id
 }
@@ -342,7 +346,8 @@ func findcssrename() string {
 	// Get the current directory
 	currentDir := "./assets/optimized/css/"
 
-	id := uuid.New().String()
+	// id := uuid.New().String()
+	id := "3333"
 	if len(id) > 15 {
 		id = id[0:8]
 	}
@@ -402,37 +407,3 @@ func UpdateText(f string, o string, n string) {
 		os.Exit(1)
 	}
 }
-
-func wr(ms string) {
-	file, fileErr := os.Create("file")
-	if fileErr != nil {
-		fmt.Println(fileErr)
-		return
-	}
-	fmt.Fprintf(file, "%v\n", ms)
-}
-
-// func iterate(dir, file string) {
-// 	currentDirectory, err := os.Getwd()
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	fileList := []string{}
-// 	filepath.Walk(currentDirectory+dir, func(path string, info os.FileInfo, err error) error {
-// 		fileList = append(fileList, path)
-// 		if err != nil {
-// 			log.Fatalf(err.Error())
-// 		}
-// 		fmt.Println(path, info, info.Name())
-// 		for _, file := range fileList {
-// 			fmt.Println(file)
-// 		}
-// 		if info.Name() != file {
-// 			// e := os.Remove(path + info.Name())
-// 			// if e != nil {
-// 			// 	log.Fatal(e)
-// 			// }
-// 		}
-// 		return nil
-// 	})
-// }

@@ -33,7 +33,6 @@ var stCmd = &cobra.Command{
 		fmt.Println(out)
 		fmt.Println("--- errs ---")
 		fmt.Println(errout)
-
 		server.Server()
 
 	},

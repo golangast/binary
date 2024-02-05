@@ -8,9 +8,8 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-const file string = "./database.db"
-
 func DbConnection() (*sql.DB, error) {
+	const file string = "./assets/db/database.db"
 
 	db, err := sql.Open("sqlite", file)
 	if err != nil {

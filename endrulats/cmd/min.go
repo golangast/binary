@@ -16,7 +16,7 @@ var minCmd = &cobra.Command{
 
 		viper.SetConfigName("assetdirectory") // name of config file (without extension)
 		viper.SetConfigType("yaml")           // REQUIRED if the config file does not have the extension in the name
-		viper.AddConfigPath("./optimize/")    // path to look for the config file in
+		viper.AddConfigPath(".")              // path to look for the config file in
 		err := viper.ReadInConfig()           // Find and read the config file
 		check(err)
 		//get paths of asset folders from config file

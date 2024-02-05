@@ -5,5 +5,8 @@ import "embed"
 //go:embed templates/*
 var Assets embed.FS
 
-//go:embed optimized/*
-var AssetsOptimized embed.FS
+//go:embed certs/cert.pem
+var Certpem embed.FS
+
+//go:embed certs/key.pem
+var Keypem embed.FS

@@ -11,7 +11,6 @@ import (
 )
 
 func Routes(e *echo.Echo) {
-
 	//get
 	e.GET("/", home.Home)
 	e.GET("/usercreate", profile.Profile)
