@@ -10,8 +10,6 @@
     <title>Welcome</title>
 
     <link rel="stylesheet"  {{ .nonce }}  rel="prefetch" href="css/min{{.cssr}}.css">
-    <!-- Google tag (gtag.js) -->
-    <script type="text/javascript"  {{ .nonce }} rel="prefetch" src="https://www.googletagmanager.com/gtag/js?id=G-RTTSFHTVY4" async></script>
 
 </head>
 <nav class="nav-extended" rel="prefetch">
@@ -51,7 +49,15 @@
         <li><a id="pizza-tab " data-bs-toggle="tab" data-bs-target="#pizza" type="button" role="tab"
                 aria-controls="pizza" aria-selected="true" href="/">Pizza</a>
         </li>
-
+        <li><a id="current-tab " data-bs-toggle="tab" data-bs-target="#current" type="button" role="tab"
+                aria-controls="current" aria-selected="true" href="/">Current</a>
+        </li>
+        <li><a id="game-tab " data-bs-toggle="tab" data-bs-target="#game" type="button" role="tab"
+                aria-controls="game" aria-selected="true" href="/">Game</a>
+        </li>
+        <li><a id="neural-tab" data-bs-toggle="tab" data-bs-target="#neural" type="button" role="tab"
+                aria-controls="neural" aria-selected="true" href="/">Neural Network</a>
+        </li>
     </div>
 </ul>
 

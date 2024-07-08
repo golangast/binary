@@ -82,7 +82,9 @@ h6 {
   .para{
     padding:2%;margin:2%;
   }
-
+  .par a{
+    display:contents !important;
+  }
   .hide{
     visibility: hidden;
   }
@@ -118,7 +120,7 @@ h6 {
 
   .floatbar{
     position: fixed;
-    top: 50%;
+    top: 0%;
     z-index: 999;
     right: 1%;
   }
@@ -168,16 +170,18 @@ h6 {
   background-size: cover;
 }
 
+
+
 .paratoper{
-  background-image: url("https://endrulats.com/img/fl.webp");
+  background-image: url("http://localhost:5002/img/fl.webp");
 
 }
 .paramiddler{
-  background-image: url("https://endrulats.com/img/nia.jpg");
+  background-image: url("http://localhost:5002/img/nia.jpg");
 
 }
 .parabottomer{
-  background-image: url("https://endrulats.com/img/gocode.webp");
+  background-image: url("http://localhost:5002/img/gocode.webp");
 
 }
 .sidebar{
@@ -233,6 +237,8 @@ h6 {
     justify-content: center;
     display: block;
 }
+
+
 .pulseicon {
   width: 95px !important;
   height: auto !important;
@@ -246,7 +252,9 @@ h6 {
 margin:3% auto;
 
 }
-
+.fa-bookmark{
+  width:20%;
+}
 .field{
   width:100%;
   margin:1%;
@@ -254,6 +262,199 @@ margin:3% auto;
   flex-direction: column;
   
 }
+
+.full { grid-area: full; }
+.lhalf { grid-area: lhalf; }
+.rhalf { grid-area: rhalf; }
+.middler { grid-area: middler; }
+
+.quarter1 { grid-area: quarter1; }
+.quarter2 { grid-area: quarter2; }
+.quarter3 { grid-area: quarter3; }
+.quarter4 { grid-area: quarter4; }
+
+.grid-container {
+  display: grid;
+  grid-template-areas:
+    'full full full full '
+    'lhalf lhalf rhalf rhalf'
+    'quarter1 quarter2 quarter3 quarter4'
+    '. middler middler .'
+   ;
+  gap: 10px;
+  background-color: #2196F3;
+  padding: 10px;
+}
+
+.grid-container > div {
+  background-color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  padding: 20px 0;
+  font-size: 30px;
+}
+.ta {
+  text-align: center;
+}
+
+
+.box-pop {
+  background: #F3F3F3;
+  color: #7E7E7E;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+}
+
+
+.br-s {
+  border-radius: 12px;
+}
+
+.hsl {
+  width: 100px;
+  height: 70px;
+  -webkit-transition: width 10s;
+  transition: height 5s;
+  overflow: hidden;
+}
+
+.hsl:hover {
+  height: 560px;
+
+}
+
+
+
+.hcontent {
+  overflow-y: 5px;
+  padding-top: 28px;
+  height: 200px;
+}
+
+
+
+
+.box-fl {
+  left: 0px;
+  position: static;
+
+}
+
+.box-con {
+  margin: 1%;
+  padding: 1%;
+  font-family: 'Varela Round', sans-serif;
+}
+
+
+.w-1-1 {
+  width: 100%;
+}
+
+
+.ta {
+  text-align: center;
+}
+
+
+.box-base {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  border: solid 1px #ccc;
+  border: solid 1px rgba(0, 0, 0, 0.3);
+  outline: 0;
+}
+
+
+
+
+.br-l {
+  border-radius: 24px;
+}
+
+
+
+
+.wsl {
+  width: 200px;
+  height: 100px;
+  -webkit-transition: width 2s;
+  transition: width 2s;
+  overflow: hidden;
+}
+
+.wsl:hover {
+  width: 400px;
+  height: 300px;
+  text-align: center;
+  margin: 0 auto;
+  margin-top: 0%;
+}
+
+
+
+
+.rwcontent {
+  float: left;
+  overflow-x: 5px;
+  padding-left: 115px;
+  width: 200px;
+}
+
+.lwcontent {
+  float: right;
+  overflow-x: -5px;
+  margin-right: 85px;
+  width: 200px;
+}
+
+.box-link {
+  float: left;
+  margin-left: 55px;
+}
+
+.box-s {
+  max-width: 400px;
+  width: 110px;
+}
+
+.box-fl {
+  left: 0px;
+  float: left;
+  position: static;
+
+}
+
+.box-fr {
+  right: 0px;
+  float: right;
+  position: static;
+
+}
+
+
+.links a {
+  color: #7E7E7E;
+  text-decoration: none;
+}
+
+a:link {
+  color: #7E7E7E;
+}
+
+a:visited {
+  color: #7E7E7E;
+}
+
+a:hover {
+  color: #7E7E7E;
+}
+
+a:active {
+  color: #7E7E7E;
+}
+
+.box-m {
+  margin-top: 19%;
+}
+
 
 @media only screen and (max-width : 992px) {
 

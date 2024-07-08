@@ -42,7 +42,19 @@
   <h5 class="card-header">Directions</h5>
   <div class="card-body">
     <h5 class="card-title">Made a video on how to make pizza</h5>
-    <center><iframe nonce="{{ .nonce }}"  class="youtube" src="https://www.youtube.com/embed/bSDPhAKk11c?si=zfUJabqDrbsVF5VP" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></center>
+    <center>
+      <div style="height: 0px; overflow: hidden; padding-top: 56.25%; position: relative; width: 100%;">
+        <iframe nonce="{{ .nonce }}"
+            style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%;"
+            src="https://tube.rvere.com/embed?v=bSDPhAKk11c&start=1&end=500"
+            title="YouTube video player"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen>
+        </iframe>
+    </div>
+      
+  </center>
 
   </div>
 </div>
